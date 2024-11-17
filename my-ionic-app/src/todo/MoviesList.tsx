@@ -25,7 +25,7 @@ import { add } from 'ionicons/icons';
 import { AuthContext } from '../auth';
 import { NetworkState } from '../pages/NetworkState';
 import { Movie } from './Movie';
-import styles from "./styles.module.css";
+import './MovieList.css'; // Import the CSS file
 
 const log = getLogger('MoviesList');
 const moviesPerPage = 5;
@@ -107,84 +107,105 @@ export const MoviesList: React.FC<RouteComponentProps> = ({ history }) => {
   return (
     <IonPage>
       <IonHeader>
-        <IonToolbar>
-          <IonTitle>MOVIE APP</IonTitle>
-          <IonSelect 
-            className={styles.selectBar} 
-            slot="end" 
-            value={filter} 
-            placeholder="Filter" 
-            onIonChange={(e) => setFilter(e.detail.value)}>
-                        {filterValues.map((each) => (
-                            <IonSelectOption key={each} value={each}>
-                                {each}
-                            </IonSelectOption>
-                        ))}
+        <IonToolbar className="custom-toolbar">
+          <IonTitle className="custom-title">MOVIE APP</IonTitle>
+          <IonSelect
+            className="custom-select"
+            slot="end"
+            value={filter}
+            placeholder="Filter"
+            onIonChange={(e) => setFilter(e.detail.value)}
+          >
+            {filterValues.map((each) => (
+              <IonSelectOption key={each} value={each}>
+                {each}
+              </IonSelectOption>
+            ))}
           </IonSelect>
-          <NetworkState />
-          <IonSearchbar className={styles.customSearchBar} placeholder="Search by title" value={searchText} debounce={200} onIonInput={(e) => {
-                        setSearchText(e.detail.value!);
-                    }} slot="secondary">
-          </IonSearchbar>
-          <IonButtons slot='end'>
-             <IonButton onClick={handleLogout}>Logout</IonButton>
+          <IonSearchbar
+            className="custom-searchbar"
+            placeholder="Search by model"
+            value={searchText}
+            debounce={200}
+            onIonInput={(e) => {
+              setSearchText(e.detail.value!);
+            }}
+            slot="secondary"
+          ></IonSearchbar>
+          <IonButtons slot="end">
+            <IonButton className="custom-logout-button" onClick={handleLogout}>
+              Logout
+            </IonButton>
           </IonButtons>
         </IonToolbar>
       </IonHeader>
-      <IonContent fullscreen>
+      <IonContent fullscreen className="custom-content">
         <IonLoading isOpen={isOpen} message="Fetching movies..." />
         {moviesAux && (
-          <IonList>
-            {moviesAux.map(movie => 
-              <MovieComponent key={movie._id} _id={movie._id} 
-              producer={movie.producer}
-              model={movie.model} 
-              price={movie.price} 
-              sellDate={movie.sellDate}
-              isElectric={movie.isElectric} 
-              isNotSaved={movie.isNotSaved}
-              webViewPath={movie.webViewPath}
-              onEdit={id => history.push(`/movie/${id}`)} /> 
-            )}
+          <IonList className="custom-movie-list">
+            {moviesAux.map((movie) => (
+              <MovieComponent
+                key={movie._id}
+                _id={movie._id}
+                producer={movie.producer}
+                model={movie.model}
+                price={movie.price}
+                sellDate={movie.sellDate}
+                isElectric={movie.isElectric}
+                isNotSaved={movie.isNotSaved}
+                webViewPath={movie.webViewPath}
+                onEdit={(id) => history.push(`/movie/${id}`)}
+              />
+            ))}
           </IonList>
         )}
-        <IonInfiniteScroll threshold="100px" disabled={!more} onIonInfinite={(e:CustomEvent<void>) => searchNext(e)} >
-          <IonInfiniteScrollContent loadingText="Loading more food..." >
-          </IonInfiniteScrollContent>
+        <IonInfiniteScroll
+          threshold="100px"
+          disabled={!more}
+          onIonInfinite={(e: CustomEvent<void>) => searchNext(e)}
+        >
+          <IonInfiniteScrollContent loadingText="Loading more movies..."></IonInfiniteScrollContent>
         </IonInfiniteScroll>
         {fetchingError && (
-          <div>{fetchingError.message || 'Failed to fetch movies'}</div>
+          <div className="error-message">
+            {fetchingError.message || 'Failed to fetch movies'}
+          </div>
         )}
         <IonFab vertical="bottom" horizontal="end" slot="fixed">
-          <IonFabButton className="square-a" onClick={() => history.push('/movie')}>
+          <IonFabButton
+            className="custom-fab-button"
+            onClick={() => history.push('/movie')}
+          >
             <IonIcon icon={add} />
           </IonFabButton>
         </IonFab>
         <IonToast
           isOpen={!!successMessage}
           message={successMessage}
-          position='bottom'
+          position="bottom"
           buttons={[
             {
               text: 'Dismiss',
               role: 'cancel',
               handler: () => {
-                console.log('More Info clicked');
+                console.log('Dismiss clicked');
               },
-            }]}
+            },
+          ]}
           onDidDismiss={closeShowSuccess}
           duration={5000}
-          />
+        />
       </IonContent>
     </IonPage>
   );
 
+
     function simpleAnimation() {
-    const el = document.querySelector('.square-a');
+    const el = document.querySelector('.custom-fab-button');
     if (el) {
         const animation = createAnimation()
             .addElement(el)
-            .duration(2000)
+            .duration(5000)
             .direction('alternate')
             .iterations(Infinity)
             .keyframes([

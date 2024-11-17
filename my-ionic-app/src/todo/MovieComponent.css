@@ -1,0 +1,106 @@
+/* Import Google Fonts */
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap');
+
+/* Movie Item Styles */
+.movie-item {
+  --background: #ffffff;
+  --background-activated: #f0f0f0;
+  border-radius: 12px;
+  margin: 10px 0;
+  padding: 15px;
+  transition: transform 0.2s;
+}
+
+.movie-item:hover {
+  transform: scale(1.02);
+  box-shadow: 0 10px 15px rgba(0, 0, 0, 0.1);
+}
+
+.movie-item.unsaved {
+  opacity: 0.6;
+}
+
+/* Movie Container */
+.movie-container {
+  display: flex;
+  align-items: flex-start;
+}
+
+/* Movie Image */
+.movie-image {
+  width: 120px;
+  height: 180px;
+  object-fit: cover;
+  border-radius: 8px;
+  margin-right: 20px;
+  flex-shrink: 0;
+}
+
+/* Movie Details */
+.movie-details {
+  font-family: 'Poppins', sans-serif;
+  color: #333;
+}
+
+.movie-title {
+  font-size: 22px;
+  font-weight: 600;
+  margin-bottom: 10px;
+}
+
+.movie-producer,
+.movie-price,
+.movie-sell-date,
+.movie-electric {
+  font-size: 16px;
+  margin-bottom: 5px;
+  display: flex;
+  align-items: center;
+}
+
+.movie-producer::before,
+.movie-price::before,
+.movie-sell-date::before,
+.movie-electric::before {
+  content: '';
+  display: inline-block;
+  width: 20px;
+  height: 20px;
+  background-size: contain;
+  background-repeat: no-repeat;
+  margin-right: 8px;
+}
+
+/* Icons for Details */
+.movie-producer::before {
+  background-image: url('data:image/svg+xml;base64,[BASE64_SVG_ICON]');
+}
+
+.movie-price::before {
+  background-image: url('data:image/svg+xml;base64,[BASE64_SVG_ICON]');
+}
+
+.movie-sell-date::before {
+  background-image: url('data:image/svg+xml;base64,[BASE64_SVG_ICON]');
+}
+
+.movie-electric::before {
+  background-image: url('data:image/svg+xml;base64,[BASE64_SVG_ICON]');
+}
+
+/* Responsive Design */
+@media (max-width: 600px) {
+  .movie-container {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .movie-image {
+    margin-right: 0;
+    margin-bottom: 15px;
+  }
+
+  .movie-details {
+    text-align: center;
+  }
+}

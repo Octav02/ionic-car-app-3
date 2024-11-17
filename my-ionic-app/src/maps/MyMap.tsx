@@ -71,7 +71,8 @@ const MyMap: React.FC<MyMapProps> = ({ lat, lng, onCoordsChanged }) => {
             coordinate: {
             lat: event.latitude,
             lng: event.longitude
-            }                                
+            },
+            title: 'New Marker'             
         });
         onCoordsChanged(event.latitude, event.longitude);               
     });                          

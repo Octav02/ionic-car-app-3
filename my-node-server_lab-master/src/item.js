@@ -24,7 +24,8 @@ export class ItemStore {
   }
 
   async update(props, item) {
-    return this.store.update(props, item);
+    console.log("updating" + props._id +  " " + item.model);
+    return this.store.update(props, { $set: item });
   }
 }
 
@@ -43,7 +44,7 @@ itemRouter.get("/", async (ctx) => {
 
 itemRouter.get("/:id", async (ctx) => {
   const userId = ctx.state.user._id;
-  const item = await noteStore.findOne({ _id: ctx.params.id });
+  const item = await itemStore.findOne({ _id: ctx.params.id });
   const response = ctx.response;
   if (item) {
     if (item.userId === userId) {

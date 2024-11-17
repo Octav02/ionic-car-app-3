@@ -1,32 +1,44 @@
-.movieContainer {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  width: 100%;
+/* styles.module.css */
+.header {
+  background-color: #1e1e1e;
+  color: #fff;
 }
 
-.disabledComponent {
-  background-color: grey;
-}
-
-.movieContainer .movieTitle {
-  display: block;
-}
-
-.customInput {
-  padding: 3px !important;
-}
-
-.errorMessage {
-  color: red;
-}
-
-.customSearchBar {
-  max-width: 40%;
-  width: auto;
+.title {
+  font-family: 'Roboto', sans-serif;
+  font-size: 1.5rem;
+  font-weight: bold;
 }
 
 .selectBar {
-  margin-inline: 2%;
+  margin-right: 10px;
+  color: #fff;
+}
+
+.customSearchBar {
+  --background: #2e2e2e;
+  --placeholder-color: #ccc;
+  --color: #fff;
+}
+
+.logoutButton {
+  color: #ff4d4d;
+}
+
+.movieList {
+  padding: 10px;
+}
+
+.errorMessage {
+  color: #ff4d4d;
+  text-align: center;
+}
+
+.addFabButton {
+  --background: #ffcc00;
+  --color: #000;
+}
+
+.toastButton {
+  color: #007bff;
 }

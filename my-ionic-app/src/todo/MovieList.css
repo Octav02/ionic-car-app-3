@@ -1,0 +1,71 @@
+/* Import a modern Google Font */
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap');
+
+.custom-toolbar {
+  --background: linear-gradient(45deg, #ff6b6b, #f94d6a);
+}
+
+.custom-title {
+  font-family: 'Roboto', sans-serif;
+  font-size: 24px;
+  font-weight: 700;
+  color: #ffffff;
+}
+
+.custom-select {
+  --placeholder-color: #ffffff;
+  color: #ffffff;
+}
+
+.custom-searchbar {
+  --background: rgba(255, 255, 255, 0.2);
+  --color: #ffffff;
+  --placeholder-color: #ffffff;
+  --icon-color: #ffffff;
+  font-family: 'Roboto', sans-serif;
+}
+
+.custom-logout-button {
+  --background: transparent;
+  color: #ffffff;
+  font-weight: bold;
+}
+
+.custom-content {
+  --background: #f0f2f5;
+}
+
+.custom-movie-list {
+  margin-top: 20px;
+}
+
+.custom-fab-button {
+  --background: #ff6b6b;
+  --color: #ffffff;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.custom-fab-button:hover {
+  --background: #f94d6a;
+}
+
+.error-message {
+  color: #ff4d4d;
+  text-align: center;
+  margin-top: 20px;
+  font-family: 'Roboto', sans-serif;
+}
+
+@media (prefers-color-scheme: dark) {
+  .custom-toolbar {
+    --background: linear-gradient(45deg, #333, #444);
+  }
+
+  .custom-content {
+    --background: #1e1e1e;
+  }
+
+  .error-message {
+    color: #ff6b6b;
+  }
+}

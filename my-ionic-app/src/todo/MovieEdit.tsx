@@ -92,7 +92,6 @@ export const MovieEdit: React.FC<MovieEditProps> = ({ history, match }) => {
   }
 
 
-  //LAB3
   const modalEl = useRef<HTMLIonModalElement>(null);
   const closeModal = () => {
     modalEl.current?.dismiss();
