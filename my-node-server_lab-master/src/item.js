@@ -16,12 +16,10 @@ export class ItemStore {
   }
 
   async insert(movie) {
-    if (!movie.title || !movie.producer) {
-      throw new Error("Missing title or producer!");
+    if (!movie.model || !movie.producer) {
+      throw new Error("Missing model or producer!");
     }
-    if (!movie.duration) {
-      throw new Error("Duration is not a number!");
-    }
+
     return this.store.insert(movie);
   }
 
@@ -89,12 +87,15 @@ itemRouter.put("/:id", async (ctx) => {
   const id = ctx.params.id;
   const movieId = movie._id;
   const response = ctx.response;
+  console.log(movieId)
+  console.log(id)
   if (movieId && movieId !== id) {
     response.body = { message: "Param id and body _id should be the same" };
     response.status = 400; // bad request
     return;
   }
   if (!movieId) {
+    console.log("entered create although put " + movieId)
     await createItem(ctx, movie, response);
   } else {
     const userId = ctx.state.user._id;

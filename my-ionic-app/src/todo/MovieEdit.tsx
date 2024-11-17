@@ -36,8 +36,8 @@ interface MovieEditProps extends RouteComponentProps<{
 
 export const MovieEdit: React.FC<MovieEditProps> = ({ history, match }) => {
   const { movies, updating, updateError, updateMovie} = useContext(MoviesContext);
-  const [title, setTitle] = useState('');
-  const [duration, setDuration] = useState('');
+  const [model, setModel] = useState('');
+  const [price, setPrice] = useState('');
   const [movieToUpdate, setMovieToUpdate] = useState<Movie>();
 
   //for photo
@@ -59,8 +59,8 @@ export const MovieEdit: React.FC<MovieEditProps> = ({ history, match }) => {
     const movie = movies?.find(it => it._id === routeId);
     setMovieToUpdate(movie);
     if(movie){
-      setTitle(movie.title);
-      setDuration(movie.duration.toString());
+      setModel(movie.model || '');
+      setPrice(movie.price?.toString() || '');
 
       //for photo
       setWebViewPath(movie.webViewPath || '');
@@ -72,12 +72,12 @@ export const MovieEdit: React.FC<MovieEditProps> = ({ history, match }) => {
   }, [match.params.id, movies]);
 
   const handleUpdate = useCallback(() => {
-    const editedMovie ={ ...movieToUpdate, title: title, duration: parseFloat(duration),webViewPath: webViewPath, latitude: currentLatitude, longitude: currentLongitude };
+    const editedMovie ={ ...movieToUpdate, model: model, price: parseFloat(price),webViewPath: webViewPath, latitude: currentLatitude, longitude: currentLongitude };
     log(editedMovie);
     console.log(updateMovie);
     console.log(editedMovie);
-    updateMovie && updateMovie(editedMovie).then(() => editedMovie.duration && history.goBack());
-  }, [movieToUpdate, updateMovie, title, duration,webViewPath,currentLatitude,currentLongitude, history]);
+    updateMovie && updateMovie(editedMovie).then(() => editedMovie.price && history.push('/movies'));
+  }, [movieToUpdate, updateMovie, model, price,webViewPath,currentLatitude,currentLongitude, history]);
 
   async function handlePhotoChange() {
     console.log('handle photo change...');
@@ -141,8 +141,8 @@ export const MovieEdit: React.FC<MovieEditProps> = ({ history, match }) => {
         </IonToolbar>
       </IonHeader>
       <IonContent>
-        <IonInput label="Title:" className={styles.customInput} placeholder="New Title" value={title} onIonInput={e => setTitle(prev => e.detail.value || '')} />
-        <IonInput label="Duration:" className={styles.customInput} placeholder="New duration" value={duration} onIonInput={e => e.detail.value ? setDuration(prev => e.detail.value!) : setDuration('') }/>
+        <IonInput label="Model:" className={styles.customInput} placeholder="New Model" value={model} onIonInput={e => setModel(prev => e.detail.value || '')} />
+        <IonInput label="Price:" className={styles.customInput} placeholder="New Price" value={price} onIonInput={e => e.detail.value ? setPrice(prev => e.detail.value!) : setPrice('') }/>
         <IonLoading isOpen={updating} />
         {updateError && (
           <div className={styles.errorMessage}>{updateError.message || 'Failed to update item'}</div>

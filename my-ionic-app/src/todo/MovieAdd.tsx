@@ -29,24 +29,24 @@ interface MovieEditProps extends RouteComponentProps<{
 
 export const MovieAdd: React.FC<MovieEditProps> = ({ history, match }) => {
   const { movies, updating, updateError, addMovie } = useContext(MoviesContext);
-  const [title, setTitle] = useState('');
-  const [duration, setDuration] = useState('');
+  const [model, setModel] = useState('');
+  const [price, setPrice] = useState('');
   const [producer, setProducer] = useState('');
-  const [date, setDate] = useState(new Date());
-  const [option, setOption] = useState(true);
+  const [sellDate, setSellDate] = useState(new Date());
+  const [isElectric, setIsElectric] = useState(true);
   const [movieToUpdate, setMovieToUpdate] = useState<Movie>();
 
   const handleAdd = useCallback(() => {
-    const editedMovie ={ ...movieToUpdate, title: title, producer: producer, duration: parseFloat(duration), dateOfRelease: date, seriesPart: option };
+    const editedMovie ={ ...movieToUpdate, model, producer, price: parseFloat(price), sellDate, isElectric };
     log(editedMovie);
     console.log(updateError);
-    addMovie && addMovie(editedMovie).then(() => editedMovie.duration && history.goBack());
-  }, [movieToUpdate, addMovie, title, duration, date, producer, option, history]);
+    addMovie && addMovie(editedMovie).then(() => editedMovie.price && history.goBack());
+  }, [movieToUpdate, addMovie, model, price, sellDate, producer, isElectric, history]);
 
   const dateChanged = (value: any) => {
     let formattedDate = value;
     console.log(formattedDate);
-    setDate(formattedDate);
+    setSellDate(formattedDate);
   };
 
   return (
@@ -65,15 +65,15 @@ export const MovieAdd: React.FC<MovieEditProps> = ({ history, match }) => {
         </IonToolbar>
       </IonHeader>
       <IonContent>
-        <IonInput label="Title:" className={styles.customInput} placeholder="New Title" value={title} onIonInput={e => setTitle(prev => e.detail.value || '')} />
-        <IonInput label="producer:" className={styles.customInput} placeholder="New producer" value={producer} onIonInput={e => setProducer(prev => e.detail.value || '')} />
-        <IonInput label="Duration:" className={styles.customInput} placeholder="New duration" value={duration} onIonInput={e => e.detail.value ? setDuration(prev => e.detail.value!) : setDuration('') }/>
-        <IonInput label="DateOfRelease:" className={styles.customInput} placeholder="Choose date" value={new Date(date).toDateString()} />
+        <IonInput label="Model:" className={styles.customInput} placeholder="New Model" value={model} onIonInput={e => setModel(prev => e.detail.value || '')} />
+        <IonInput label="Producer:" className={styles.customInput} placeholder="New producer" value={producer} onIonInput={e => setProducer(prev => e.detail.value || '')} />
+        <IonInput label="Price:" className={styles.customInput} placeholder="New Price" value={price} onIonInput={e => e.detail.value ? setPrice(prev => e.detail.value!) : setPrice('') }/>
+        <IonInput label="Sell Date:" className={styles.customInput} placeholder="Choose sell date" value={new Date(sellDate).toDateString()} />
         <IonDatetime
                 onIonChange={(e) => dateChanged(e.detail.value)}>
         </IonDatetime>
-        <IonInput label="Other series movies:" className={styles.customInput} placeholder="True/False" value={option==true ? 'True' : 'False'} />
-        <IonSelect value={option} onIonChange={e => setOption(e.detail.value)}>
+        <IonInput label="Is electric?:" className={styles.customInput} placeholder="True/False" value={isElectric==true ? 'True' : 'False'} />
+        <IonSelect value={isElectric} onIonChange={e => setIsElectric(e.detail.value)}>
           <IonSelectOption value={true}>
             {'True'}
           </IonSelectOption>

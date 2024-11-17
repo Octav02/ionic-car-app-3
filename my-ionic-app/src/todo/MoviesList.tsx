@@ -29,7 +29,7 @@ import styles from "./styles.module.css";
 
 const log = getLogger('MoviesList');
 const moviesPerPage = 5;
-const filterValues = ["IsPartOfASerie", "IsNotPartOfASerie"];
+const filterValues = ["IsElectric", "IsNotElectric"];
 
 export const MoviesList: React.FC<RouteComponentProps> = ({ history }) => {
   const { movies, fetching, fetchingError, successMessage, closeShowSuccess } = useContext(MoviesContext);
@@ -69,7 +69,7 @@ export const MoviesList: React.FC<RouteComponentProps> = ({ history }) => {
       setMoviesAux(movies);
     }
     if (movies && searchText !== "") {
-      setMoviesAux(movies.filter(movie => movie.title!.startsWith(searchText)));
+      setMoviesAux(movies.filter(movie => movie.model!.startsWith(searchText)));
     }
   }, [searchText]);
 
@@ -78,9 +78,9 @@ export const MoviesList: React.FC<RouteComponentProps> = ({ history }) => {
     if (movies && filter) {
         setMoviesAux(movies.filter(movie => {
             if (filter === "IsPartOfASerie")
-                return movie.seriesPart === true;
+                return movie.isElectric === true;
             else
-                return movie.seriesPart === false;
+                return movie.isElectric === false;
         }));
     }
 }, [filter]);
@@ -138,10 +138,10 @@ export const MoviesList: React.FC<RouteComponentProps> = ({ history }) => {
             {moviesAux.map(movie => 
               <MovieComponent key={movie._id} _id={movie._id} 
               producer={movie.producer}
-              title={movie.title} 
-              duration={movie.duration} 
-              dateOfRelease={movie.dateOfRelease}
-              seriesPart={movie.seriesPart} 
+              model={movie.model} 
+              price={movie.price} 
+              sellDate={movie.sellDate}
+              isElectric={movie.isElectric} 
               isNotSaved={movie.isNotSaved}
               webViewPath={movie.webViewPath}
               onEdit={id => history.push(`/movie/${id}`)} /> 

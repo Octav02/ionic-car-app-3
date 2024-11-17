@@ -74,7 +74,7 @@ const reducer: (state: MoviesState, action: ActionProps) => MoviesState
             const beforeMovies = [...(state.movies || [])];
             const createdMovie = payload.movie;
             console.log(createdMovie);
-            const indexOfAdded = beforeMovies.findIndex(it => it._id === createdMovie._id || it.title === createdMovie.title);
+            const indexOfAdded = beforeMovies.findIndex(it => it._id === createdMovie._id || it.model === createdMovie.model);
             console.log("index: ", indexOfAdded);
             if (indexOfAdded === -1) {
                 beforeMovies.splice(0, 0, createdMovie);
@@ -164,7 +164,7 @@ export const MovieProvider: React.FC<MovieProviderProps> = ({ children }) => {
 
           movie.isNotSaved = true;
           await Preferences.set({
-            key: `upd-${movie.title}`,
+            key: `upd-${movie.model}`,
             value: JSON.stringify({token, movie })
           });
           dispatch({ type: UPDATE_MOVIE_SUCCEDED, payload: { movie: movie } });
@@ -197,7 +197,7 @@ export const MovieProvider: React.FC<MovieProviderProps> = ({ children }) => {
           movie._id = numberOfItems.toString(); // ii adaug si id...
           movie.isNotSaved = true;
           await Preferences.set({
-            key: `sav-${movie.title}`,
+            key: `sav-${movie.model}`,
             value: JSON.stringify({token, movie })
           });
           dispatch({ type: CREATE_MOVIE_SUCCEDED, payload: { movie: movie } });

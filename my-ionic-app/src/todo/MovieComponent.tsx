@@ -8,19 +8,19 @@ interface MoviePropsExtended extends Movie {
     onEdit: (_id?: string) => void;
 }
 
-const MovieComponent: React.FC<MoviePropsExtended> = ({_id, producer, duration, title, dateOfRelease, seriesPart, isNotSaved,webViewPath, onEdit }) => (
+const MovieComponent: React.FC<MoviePropsExtended> = ({_id, producer, price, model, sellDate, isElectric, isNotSaved,webViewPath, onEdit }) => (
     <IonItem color={isNotSaved ? "medium" : undefined} onClick={()=> onEdit(_id)}>
         <div className={styles.movieContainer}>
             <IonLabel className={styles.movieTitle}>
-                <h1>{title}</h1>
+                <h1>{model}</h1>
             </IonLabel>
             <div className={styles.component}>
                 <p>Producer: {producer} </p>
-                <p>Duration: {duration}  min</p>
-                {dateOfRelease && (
-                    <p>Released at: {new Date(dateOfRelease).toDateString()} </p>
+                <p>Price: {price}  $</p>
+                {sellDate && (
+                    <p>Sold at: {new Date(sellDate).toDateString()} </p>
                 )}
-                {seriesPart && <p>Part of a serie: Yes</p>}
+                {isElectric && <p>Electric: Yes</p>}
                 <img src={webViewPath} alt={"No image"} width={'200px'} height={'200px'}/>
             </div>
         </div>
