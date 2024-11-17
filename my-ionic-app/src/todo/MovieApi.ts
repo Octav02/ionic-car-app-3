@@ -1,27 +1,27 @@
 import axios from "axios";
 import { getLogger, authConfig, baseUrl, withLogs } from "../core";
-import { Movie } from "./Movie";
+import { Car } from "./Movie";
 import { Preferences } from "@capacitor/preferences";
 
 const log = getLogger('movieLogger');
 
-const getBooksUrl = `http://${baseUrl}/api/movie`;
-const updateBookUrl = `http://${baseUrl}/api/movie`;
-const createMovieUrl = `http://${baseUrl}/api/movie`;
+const getBooksUrl = `http://${baseUrl}/api/car`;
+const updateBookUrl = `http://${baseUrl}/api/car`;
+const createMovieUrl = `http://${baseUrl}/api/car`;
 
-export const getAllMovies: (token: string) => Promise<Movie[]> = (token) => {
+export const getAllMovies: (token: string) => Promise<Car[]> = (token) => {
     return withLogs(axios.get(getBooksUrl, authConfig(token)), 'getAllMovies');
 }
 
-export const updateMovieAPI: (token: string, movie: Movie) => Promise<Movie[]> = (token, movie) => {
+export const updateMovieAPI: (token: string, movie: Car) => Promise<Car[]> = (token, movie) => {
     return withLogs(axios.put(`${updateBookUrl}/${movie._id}`, movie, authConfig(token)), 'updateMovie');
 }
 
-export const createMovieAPI: (token: string, movie: Movie) => Promise<Movie[]> = (token, movie) => {
+export const createMovieAPI: (token: string, movie: Car) => Promise<Car[]> = (token, movie) => {
   return withLogs(axios.post(`${createMovieUrl}`, movie, authConfig(token)), 'createMovie');
 }
 
-export const deleteMovieAPI: (token: string, id: string) => Promise<Movie[]> = (token, id) => {
+export const deleteMovieAPI: (token: string, id: string) => Promise<Car[]> = (token, id) => {
   return withLogs(axios.delete(`${createMovieUrl}/${id}`, authConfig(token)), 'deleteMovie');
 }
 
@@ -29,7 +29,7 @@ interface MessageData {
     event: string;
     payload: {
       successMessage: string,
-      updatedMovie: Movie
+      updatedMovie: Car
     };
 }
 

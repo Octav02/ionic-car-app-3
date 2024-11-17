@@ -21,7 +21,7 @@ import {
 import { getLogger } from '../core';
 import { RouteComponentProps } from 'react-router';
 import { MoviesContext } from './MovieProvider';
-import { Movie } from './Movie';
+import { Car } from './Movie';
 import { MyPhoto, usePhotos } from '../photo/usePhotos';
 import { camera, close, trash } from 'ionicons/icons';
 import MyMap from '../maps/MyMap';
@@ -38,7 +38,7 @@ export const MovieEdit: React.FC<MovieEditProps> = ({ history, match }) => {
   const { movies, updating, updateError, updateMovie} = useContext(MoviesContext);
   const [model, setModel] = useState('');
   const [price, setPrice] = useState('');
-  const [movieToUpdate, setMovieToUpdate] = useState<Movie>();
+  const [movieToUpdate, setMovieToUpdate] = useState<Car>();
 
   //for photo
   const [webViewPath, setWebViewPath] = useState<string | undefined>('');

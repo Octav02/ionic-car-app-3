@@ -28,7 +28,7 @@ import { IonContent,
 import { add } from 'ionicons/icons';
 import { AuthContext } from '../auth';
 import { NetworkState } from '../pages/NetworkState';
-import { Movie } from './Movie';
+import { Car } from './Movie';
 import './MovieList.css'; // Import the CSS file
 
 import { GoogleMap } from '@capacitor/google-maps';
@@ -36,28 +36,25 @@ import { mapsApiKey } from '../maps/mapsApiKey';
 import { MarkerClickCallbackData } from '@capacitor/google-maps/dist/typings/definitions';
 
 const log = getLogger('MoviesList');
-const moviesPerPage = 5;
+const carsPerPage = 5;
 const filterValues = ["IsElectric", "IsNotElectric"];
 
 export const MoviesList: React.FC<RouteComponentProps> = ({ history }) => {
-  const { movies, fetching, fetchingError, successMessage, closeShowSuccess } = useContext(MoviesContext);
+  const { movies: cars, fetching, fetchingError, successMessage, closeShowSuccess } = useContext(MoviesContext);
   const { logout } = useContext(AuthContext);
   const [isOpen, setIsOpen]= useState(false);
   const [index, setIndex] = useState<number>(0);
-  const [moviesAux, setMoviesAux] = useState<Movie[] | undefined>([]);
+  const [carsAux, setCarsAux] = useState<Car[] | undefined>([]);
   const [more, setHasMore] = useState(true);
   const [searchText, setSearchText] = useState('');
   const [filter, setFilter] = useState<string | undefined>(undefined);
-  const [markerDetails, setMarkerDetails] = useState<any>(null); // State for marker details
+  const [markerDetails, setMarkerDetails] = useState<any>(null); 
 
   const handleMarkerClick = async (marker: MarkerClickCallbackData) => {
     setMarkerDetails(marker);
     console.log("MARKER" + marker.title);
   };
 
-  //const [hasFetched, setHasFetched] = useState(false);
-
-  //animations
   useEffect(simpleAnimation, []);
 
   useEffect(()=>{
@@ -66,7 +63,7 @@ export const MoviesList: React.FC<RouteComponentProps> = ({ history }) => {
   }, [fetching]);
 
   log('render');
-  console.log(movies);
+  console.log(cars);
 
   function handleLogout(){
     logout?.();
@@ -76,41 +73,41 @@ export const MoviesList: React.FC<RouteComponentProps> = ({ history }) => {
   //pagination
   useEffect(()=>{
     fetchData();
-  }, [movies]);
+  }, [cars]);
   const [showMap, setShowMap] = useState(false);
 
   // searching
   useEffect(()=>{
     if (searchText === "") {
-      setMoviesAux(movies);
+      setCarsAux(cars);
     }
-    if (movies && searchText !== "") {
-      setMoviesAux(movies.filter(movie => movie.model!.startsWith(searchText)));
+    if (cars && searchText !== "") {
+      setCarsAux(cars.filter(car => car.model!.startsWith(searchText)));
     }
   }, [searchText]);
 
    // filtering
    useEffect(() => {
-    if (movies && filter) {
-        setMoviesAux(movies.filter(movie => {
+    if (cars && filter) {
+        setCarsAux(cars.filter(car => {
             if (filter === "IsPartOfASerie")
-                return movie.isElectric === true;
+                return car.isElectric === true;
             else
-                return movie.isElectric === false;
+                return car.isElectric === false;
         }));
     }
 }, [filter]);
 
   function fetchData() {
-    if(movies){
-      const newIndex = Math.min(index + moviesPerPage, movies.length);
-      if( newIndex >= movies.length){
+    if(cars){
+      const newIndex = Math.min(index + carsPerPage, cars.length);
+      if( newIndex >= cars.length){
           setHasMore(false);
       }
       else{
           setHasMore(true);
       }
-      setMoviesAux(movies.slice(0, newIndex));
+      setCarsAux(cars.slice(0, newIndex));
       setIndex(newIndex);
     }
   }
@@ -138,14 +135,14 @@ useEffect(() => {
       });
       mapRef.current = map;
 
-      if (moviesAux) {
-        moviesAux.forEach((movie) => {
+      if (carsAux) {
+        carsAux.forEach((car) => {
           map.addMarker({
             coordinate: {
-              lat: movie.latitude || 42,
-              lng: movie.longitude || 42,
+              lat: car.latitude || 42,
+              lng: car.longitude || 42,
             },
-            title: movie.model,
+            title: car.model,
           });
         });
 
@@ -161,7 +158,7 @@ useEffect(() => {
       mapRef.current.destroy();
     }
   };
-}, [moviesAux]);
+}, [carsAux]);
 const handleMapButtonClick = () => {
   if (showMap === false) {
   setShowMap(!showMap);
@@ -175,7 +172,7 @@ const handleMapButtonClick = () => {
     <IonPage>
       <IonHeader>
         <IonToolbar className="custom-toolbar">
-          <IonTitle className="custom-title">MOVIE APP</IonTitle>
+          <IonTitle className="custom-title">My car application</IonTitle>
           <IonSelect
             className="custom-select"
             slot="end"
@@ -207,21 +204,21 @@ const handleMapButtonClick = () => {
         </IonToolbar>
       </IonHeader>
       <IonContent fullscreen className="custom-content">
-        <IonLoading isOpen={isOpen} message="Fetching movies..." />
-        {moviesAux && (
-          <IonList className="custom-movie-list">
-            {moviesAux.map((movie) => (
+        <IonLoading isOpen={isOpen} message="Fetching cars..." />
+        {carsAux && (
+          <IonList className="custom-car-list">
+            {carsAux.map((car) => (
               <MovieComponent
-                key={movie._id}
-                _id={movie._id}
-                producer={movie.producer}
-                model={movie.model}
-                price={movie.price}
-                sellDate={movie.sellDate}
-                isElectric={movie.isElectric}
-                isNotSaved={movie.isNotSaved}
-                webViewPath={movie.webViewPath}
-                onEdit={(id) => history.push(`/movie/${id}`)}
+                key={car._id}
+                _id={car._id}
+                producer={car.producer}
+                model={car.model}
+                price={car.price}
+                sellDate={car.sellDate}
+                isElectric={car.isElectric}
+                isNotSaved={car.isNotSaved}
+                webViewPath={car.webViewPath}
+                onEdit={(id) => history.push(`/car/${id}`)}
               />
             ))}
           </IonList>
@@ -278,8 +275,8 @@ const handleMapButtonClick = () => {
             {markerDetails && (
             <IonCardContent style={{ textAlign: 'center', marginTop: '10px' }}>
               <IonCardTitle style={{ fontSize: '1.2em', fontWeight: 'bold' }}>{markerDetails.title}</IonCardTitle>
-              <p style={{ margin: '5px 0' }}>Latitude: {markerDetails.latitude}</p>
-              <p style={{ margin: '5px 0' }}>Longitude: {markerDetails.longitude}</p>
+              <IonCardTitle style={{ margin: '5px 0' }}>Latitude: {markerDetails.latitude}</IonCardTitle>
+              <IonCardTitle style={{ margin: '5px 0' }}>Longitude: {markerDetails.longitude}</IonCardTitle>
             </IonCardContent>
             )}
         </IonCard>

@@ -31,7 +31,7 @@ app.use(jwt(jwtConfig));
 
 // protected
 const protectedApiRouter = new Router({ prefix });
-protectedApiRouter.use("/movie", itemRouter.routes());
+protectedApiRouter.use("/car", itemRouter.routes());
 app.use(protectedApiRouter.routes()).use(protectedApiRouter.allowedMethods());
 
 server.listen(3000);

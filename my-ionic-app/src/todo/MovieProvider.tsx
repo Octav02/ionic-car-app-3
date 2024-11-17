@@ -2,7 +2,7 @@ import React, { useCallback, useEffect, useReducer, useContext } from 'react';
 import PropTypes from 'prop-types';
 import { getLogger } from '../core';
 import { getAllMovies, updateMovieAPI, createMovieAPI, newWebSocket, deleteMovieAPI } from './MovieApi';
-import { Movie } from './Movie';
+import { Car } from './Movie';
 import { AuthContext } from '../auth';
 import { useNetwork } from '../pages/useNetwork';
 import {useIonToast} from "@ionic/react";
@@ -10,10 +10,10 @@ import { Preferences } from '@capacitor/preferences';
 
 const log = getLogger('MovieProvider');
 
-type UpdateMovieFn = (movie: Movie) => Promise<any>;
+type UpdateMovieFn = (movie: Car) => Promise<any>;
 
 interface MoviesState {
-    movies?: Movie[];
+    movies?: Car[];
     fetching: boolean;
     fetchingError?: Error | null;
     updating: boolean,
@@ -34,43 +34,43 @@ const initialState: MoviesState = {
     updating: false,
 };
 
-const FETCH_MOVIES_STARTED = 'FETCH_MOVIES_STARTED';
-const FETCH_MOVIES_SUCCEEDED = 'FETCH_MOVIES_SUCCEEDED';
-const FETCH_MOVIES_FAILED = 'FETCH_MOVIES_FAILED';
-const UPDATE_MOVIE_STARTED = 'UPDATE_MOVIE_STARTED';
-const UPDATE_MOVIE_SUCCEDED = 'UPDATE_MOVIE_SUCCEDED';
-const UPDATE_MOVIE_FAILED = 'UPDATE_MOVIE_FAILED';
+const FETCH_CARS_STARTED = 'FETCH_CARS_STARTED';
+const FETCH_CARS_SUCCEEDED = 'FETCH_CARS_SUCCEEDED';
+const FETCH_CARS_FAILED = 'FETCH_CARS_FAILED';
+const UPDATE_CAR_STARTED = 'UPDATE_CAR_STARTED';
+const UPDATE_CAR_SUCCESS = 'UPDATE_CAR_SUCCEDED';
+const UPDATE_CAR_FAILED = 'UPDATE_CAR_FAILED';
 const SHOW_SUCCESS_MESSSAGE = 'SHOW_SUCCESS_MESSAGE';
 const HIDE_SUCCESS_MESSSAGE = 'HIDE_SUCCESS_MESSAGE';
-const CREATE_MOVIE_STARTED = 'CREATE_MOVIE_STARTED';
-const CREATE_MOVIE_SUCCEDED = 'CREATE_MOVIE_SUCCEDED';
-const CREATE_MOVIE_FAILED = 'CREATE_MOVIE_FAILED';
+const CREATE_CAR_STARTED = 'CREATE_CAR_STARTED';
+const CREATE_CAR_SUCCEDED = 'CREATE_CAR_SUCCEDED';
+const CREATE_CAR_FAILED = 'CREATE_CAR_FAILED';
 
 const reducer: (state: MoviesState, action: ActionProps) => MoviesState 
     = (state, { type, payload }) => {
     switch(type){
-        case FETCH_MOVIES_STARTED:
+        case FETCH_CARS_STARTED:
             return { ...state, fetching: true, fetchingError: null };
-        case FETCH_MOVIES_SUCCEEDED:
+        case FETCH_CARS_SUCCEEDED:
             return {...state, movies: payload.movies, fetching: false };
-        case FETCH_MOVIES_FAILED:
+        case FETCH_CARS_FAILED:
             return { ...state, fetchingError: payload.error, fetching: false };
-        case UPDATE_MOVIE_STARTED:
+        case UPDATE_CAR_STARTED:
             return { ...state, updateError: null, updating: true };
-        case UPDATE_MOVIE_FAILED:
+        case UPDATE_CAR_FAILED:
             return { ...state, updateError: payload.error, updating: false };
-        case UPDATE_MOVIE_SUCCEDED:
+        case UPDATE_CAR_SUCCESS:
             const movies = [...(state.movies || [])];
             const movie = payload.movie;
             const index = movies.findIndex(it => it._id === movie._id);
             movies[index] = movie;
             return { ...state,  movies, updating: false };
-        case CREATE_MOVIE_FAILED:
+        case CREATE_CAR_FAILED:
             console.log(payload.error);
           return { ...state, updateError: payload.error, updating: false };
-        case CREATE_MOVIE_STARTED:
+        case CREATE_CAR_STARTED:
           return { ...state, updateError: null, updating: true };
-        case CREATE_MOVIE_SUCCEDED:
+        case CREATE_CAR_SUCCEDED:
             const beforeMovies = [...(state.movies || [])];
             const createdMovie = payload.movie;
             console.log(createdMovie);
@@ -135,28 +135,28 @@ export const MovieProvider: React.FC<MovieProviderProps> = ({ children }) => {
 
             try{
                 log('fetchMovies started');
-                dispatch({ type: FETCH_MOVIES_STARTED });
+                dispatch({ type: FETCH_CARS_STARTED });
                 const movies = await getAllMovies(token);
                 log('fetchItems succeeded');
                 if (!canceled) {
-                dispatch({ type: FETCH_MOVIES_SUCCEEDED, payload: { movies } });
+                dispatch({ type: FETCH_CARS_SUCCEEDED, payload: { movies } });
                 }
             } catch (error) {
                 log('fetchItems failed');
                 if (!canceled) {
-                    dispatch({ type: FETCH_MOVIES_FAILED, payload: { error } });
+                    dispatch({ type: FETCH_CARS_FAILED, payload: { error } });
                 }
             }
         }
     }
 
-    async function updateMovieCallback(movie: Movie) {
+    async function updateMovieCallback(movie: Car) {
         try {
           log('updateMovie started');
-          dispatch({ type: UPDATE_MOVIE_STARTED });
+          dispatch({ type: UPDATE_CAR_STARTED });
           const updatedMovie = await updateMovieAPI(token, movie);
           log('saveMovie succeeded');
-          dispatch({ type: UPDATE_MOVIE_SUCCEDED, payload: { movie: updatedMovie } });
+          dispatch({ type: UPDATE_CAR_SUCCESS, payload: { movie: updatedMovie } });
         } catch (error: any) {
           log('updateMovie failed');
           // save item to storage
@@ -167,23 +167,23 @@ export const MovieProvider: React.FC<MovieProviderProps> = ({ children }) => {
             key: `upd-${movie.model}`,
             value: JSON.stringify({token, movie })
           });
-          dispatch({ type: UPDATE_MOVIE_SUCCEDED, payload: { movie: movie } });
+          dispatch({ type: UPDATE_CAR_SUCCESS, payload: { movie: movie } });
           toast("You are offline... Updating movie locally!", 3000);
     
           if(error.toJSON().message === 'Network Error')
-            dispatch({ type: UPDATE_MOVIE_FAILED, payload: { error: new Error(error.response) } });
+            dispatch({ type: UPDATE_CAR_FAILED, payload: { error: new Error(error.response) } });
         }
     }
 
-    async function addMovieCallback(movie: Movie){
+    async function addMovieCallback(movie: Car){
         try{
           log('addMovie started');
-          dispatch({ type: CREATE_MOVIE_STARTED });
+          dispatch({ type: CREATE_CAR_STARTED });
           console.log(token);
           const addedMovie = await createMovieAPI(token, movie);
           console.log(addedMovie);
           log('saveMovie succeeded');
-          dispatch({ type: CREATE_MOVIE_SUCCEDED, payload: { movie: addedMovie } });
+          dispatch({ type: CREATE_CAR_SUCCEDED, payload: { movie: addedMovie } });
         }catch(error: any){
           log('addMovie failed');
           console.log(error.response);
@@ -200,11 +200,11 @@ export const MovieProvider: React.FC<MovieProviderProps> = ({ children }) => {
             key: `sav-${movie.model}`,
             value: JSON.stringify({token, movie })
           });
-          dispatch({ type: CREATE_MOVIE_SUCCEDED, payload: { movie: movie } });
+          dispatch({ type: CREATE_CAR_SUCCEDED, payload: { movie: movie } });
           toast("You are offline... Saving movie locally!", 3000);
     
           if(error.toJSON().message === 'Network Error')
-            dispatch({ type: CREATE_MOVIE_FAILED, payload: { error: new Error(error.response || 'Network error') } });
+            dispatch({ type: CREATE_CAR_FAILED, payload: { error: new Error(error.response || 'Network error') } });
         }
     }
 
@@ -262,7 +262,7 @@ export const MovieProvider: React.FC<MovieProviderProps> = ({ children }) => {
             }
             else if(event == 'created'){
               console.log(payload);
-              dispatch({ type: CREATE_MOVIE_SUCCEDED, payload: { movie: payload.updatedMovie } });
+              dispatch({ type: CREATE_CAR_SUCCEDED, payload: { movie: payload.updatedMovie } });
             }
           });
         }

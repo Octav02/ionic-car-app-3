@@ -1,4 +1,4 @@
-export interface Movie {
+export interface Car {
     _id?: string;
     model?: string;
     producer?: string;

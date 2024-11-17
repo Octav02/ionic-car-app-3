@@ -27,11 +27,11 @@ const App: React.FC = () => (
           <AuthProvider>
             <Route path="/login" component={Login} exact={true}/>
             <MovieProvider>
-              <PrivateRoute path="/movies" component={MoviesList} exact={true} />
-              <PrivateRoute path="/movie" component={MovieAdd} exact={true}/>
-              <PrivateRoute path="/movie/:id" component={MovieEdit} exact={true}/>
+              <PrivateRoute path="/cars" component={MoviesList} exact={true} />
+              <PrivateRoute path="/car" component={MovieAdd} exact={true}/>
+              <PrivateRoute path="/car/:id" component={MovieEdit} exact={true}/>
             </MovieProvider>
-            <Route exact path="/" render={() => <Redirect to="/movies"/>}/>
+            <Route exact path="/" render={() => <Redirect to="/cars"/>}/>
           </AuthProvider>
         </IonRouterOutlet>
       </IonReactRouter>

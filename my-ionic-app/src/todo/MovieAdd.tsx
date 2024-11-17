@@ -18,7 +18,7 @@ import {
 import { getLogger } from '../core';
 import { RouteComponentProps } from 'react-router';
 import { MoviesContext } from './MovieProvider';
-import { Movie } from './Movie';
+import { Car } from './Movie';
 import styles from './styles.module.css';
 
 const log = getLogger('SaveLogger');
@@ -34,7 +34,7 @@ export const MovieAdd: React.FC<MovieEditProps> = ({ history, match }) => {
   const [producer, setProducer] = useState('');
   const [sellDate, setSellDate] = useState(new Date());
   const [isElectric, setIsElectric] = useState(true);
-  const [movieToUpdate, setMovieToUpdate] = useState<Movie>();
+  const [movieToUpdate, setMovieToUpdate] = useState<Car>();
 
   const handleAdd = useCallback(() => {
     const editedMovie ={ ...movieToUpdate, model, producer, price: parseFloat(price), sellDate, isElectric };
