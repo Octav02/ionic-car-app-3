@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useContext, useEffect, useRef, useState } from 'react';
 import { RouteComponentProps } from 'react-router';
 import MovieComponent from './MovieComponent';
 import { getLogger } from '../core';
@@ -19,7 +19,11 @@ import { IonContent,
          IonInfiniteScroll,
          IonInfiniteScrollContent,
          IonSearchbar,
-         IonSelect, IonSelectOption, createAnimation } from '@ionic/react';
+         IonSelect, IonSelectOption, createAnimation, 
+         IonCard,
+         IonCardHeader,
+         IonCardTitle,
+         IonCardContent} from '@ionic/react';
 
 import { add } from 'ionicons/icons';
 import { AuthContext } from '../auth';
@@ -27,9 +31,9 @@ import { NetworkState } from '../pages/NetworkState';
 import { Movie } from './Movie';
 import './MovieList.css'; // Import the CSS file
 
-import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
-import 'leaflet/dist/leaflet.css';
-import L from 'leaflet';
+import { GoogleMap } from '@capacitor/google-maps';
+import { mapsApiKey } from '../maps/mapsApiKey';
+import { MarkerClickCallbackData } from '@capacitor/google-maps/dist/typings/definitions';
 
 const log = getLogger('MoviesList');
 const moviesPerPage = 5;
@@ -44,6 +48,13 @@ export const MoviesList: React.FC<RouteComponentProps> = ({ history }) => {
   const [more, setHasMore] = useState(true);
   const [searchText, setSearchText] = useState('');
   const [filter, setFilter] = useState<string | undefined>(undefined);
+  const [markerDetails, setMarkerDetails] = useState<any>(null); // State for marker details
+
+  const handleMarkerClick = async (marker: MarkerClickCallbackData) => {
+    setMarkerDetails(marker);
+    console.log("MARKER" + marker.title);
+  };
+
   //const [hasFetched, setHasFetched] = useState(false);
 
   //animations
@@ -66,6 +77,7 @@ export const MoviesList: React.FC<RouteComponentProps> = ({ history }) => {
   useEffect(()=>{
     fetchData();
   }, [movies]);
+  const [showMap, setShowMap] = useState(false);
 
   // searching
   useEffect(()=>{
@@ -107,14 +119,57 @@ export const MoviesList: React.FC<RouteComponentProps> = ({ history }) => {
     await fetchData();
     await ($event.target as HTMLIonInfiniteScrollElement).complete();
   }
-  const icon = new L.Icon({
-    iconUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon.png',
-    iconSize: [25, 41],
-    iconAnchor: [12, 41],
-    popupAnchor: [1, -34],
-    shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-shadow.png',
-    shadowSize: [41, 41]
-  });
+  const mapRef = useRef<GoogleMap>();
+
+useEffect(() => {
+  const createMap = async () => {
+    if (!mapRef.current) {
+      const map = await GoogleMap.create({
+        id: 'my-map', // Unique identifier for this map instance
+        element: document.getElementById('map')!,
+        apiKey: mapsApiKey, // Replace with your Google Maps API key
+        config: {
+          center: {
+            lat: 45,
+            lng: 27,
+          },
+          zoom: 8,
+        },
+      });
+      mapRef.current = map;
+
+      if (moviesAux) {
+        moviesAux.forEach((movie) => {
+          map.addMarker({
+            coordinate: {
+              lat: movie.latitude || 42,
+              lng: movie.longitude || 42,
+            },
+            title: movie.model,
+          });
+        });
+
+        await map.setOnMarkerClickListener((marker) => {
+          handleMarkerClick(marker);
+        });
+      }
+    }
+  };
+  createMap();
+  return () => {
+    if (mapRef.current) {
+      mapRef.current.destroy();
+    }
+  };
+}, [moviesAux]);
+const handleMapButtonClick = () => {
+  if (showMap === false) {
+  setShowMap(!showMap);
+  // searchNext(new CustomEvent('ionInfinite'));
+  fetchData();
+  }
+};
+
 
   return (
     <IonPage>
@@ -172,26 +227,6 @@ export const MoviesList: React.FC<RouteComponentProps> = ({ history }) => {
           </IonList>
         )}
 
-<MapContainer center={[51.505, -0.09]} zoom={13} style={{ height: '400px', width: '100%' }}>
-      <TileLayer
-        url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-        attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-      />
-      {moviesAux && moviesAux.map((movie) => (
-        <Marker
-          key={movie._id}
-          position={[movie.latitude || 42, movie.longitude || 42]}
-          icon={icon}
-        >
-          <Popup>
-            <div>
-              <h3>{movie.producer}</h3>
-              <p>{movie.model}</p>
-            </div>
-          </Popup>
-        </Marker>
-      ))}
-    </MapContainer>
 
         <IonInfiniteScroll
           threshold="100px"
@@ -229,7 +264,26 @@ export const MoviesList: React.FC<RouteComponentProps> = ({ history }) => {
           onDidDismiss={closeShowSuccess}
           duration={5000}
         />
-      
+
+      <IonButton onClick={handleMapButtonClick}>
+        Show Map
+      </IonButton>
+
+      {showMap && (
+        <IonCard>
+          <IonCardHeader>
+            <IonCardTitle>Map</IonCardTitle>
+          </IonCardHeader>
+            <div id="map" style={{ height: '400px', width: '100%', borderRadius: '10px', boxShadow: '0 4px 8px rgba(0, 0, 0, 0.2)' }}></div>
+            {markerDetails && (
+            <IonCardContent style={{ textAlign: 'center', marginTop: '10px' }}>
+              <IonCardTitle style={{ fontSize: '1.2em', fontWeight: 'bold' }}>{markerDetails.title}</IonCardTitle>
+              <p style={{ margin: '5px 0' }}>Latitude: {markerDetails.latitude}</p>
+              <p style={{ margin: '5px 0' }}>Longitude: {markerDetails.longitude}</p>
+            </IonCardContent>
+            )}
+        </IonCard>
+      )}
       </IonContent>
 
     </IonPage>
