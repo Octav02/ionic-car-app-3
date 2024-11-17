@@ -17,31 +17,31 @@ import {
 } from '@ionic/react';
 import { getLogger } from '../core';
 import { RouteComponentProps } from 'react-router';
-import { MoviesContext } from './MovieProvider';
+import { CarsContext } from './MovieProvider';
 import { Car } from './Movie';
 import styles from './styles.module.css';
 
 const log = getLogger('SaveLogger');
 
-interface MovieEditProps extends RouteComponentProps<{
+interface CarEditProps extends RouteComponentProps<{
   id?: string;
 }> {}
 
-export const MovieAdd: React.FC<MovieEditProps> = ({ history, match }) => {
-  const { movies, updating, updateError, addMovie } = useContext(MoviesContext);
+export const MovieAdd: React.FC<CarEditProps> = ({ history, match }) => {
+  const { cars: cars, updating, updateError, addCar: addCar } = useContext(CarsContext);
   const [model, setModel] = useState('');
   const [price, setPrice] = useState('');
   const [producer, setProducer] = useState('');
   const [sellDate, setSellDate] = useState(new Date());
   const [isElectric, setIsElectric] = useState(true);
-  const [movieToUpdate, setMovieToUpdate] = useState<Car>();
+  const [carToUpdate, setCarToUpdate] = useState<Car>();
 
   const handleAdd = useCallback(() => {
-    const editedMovie ={ ...movieToUpdate, model, producer, price: parseFloat(price), sellDate, isElectric };
-    log(editedMovie);
+    const editedCar ={ ...carToUpdate, model, producer, price: parseFloat(price), sellDate, isElectric };
+    log(editedCar);
     console.log(updateError);
-    addMovie && addMovie(editedMovie).then(() => editedMovie.price && history.goBack());
-  }, [movieToUpdate, addMovie, model, price, sellDate, producer, isElectric, history]);
+    addCar && addCar(editedCar).then(() => editedCar.price && history.goBack());
+  }, [carToUpdate, addCar, model, price, sellDate, producer, isElectric, history]);
 
   const dateChanged = (value: any) => {
     let formattedDate = value;

@@ -2,7 +2,7 @@ import React, { useContext, useEffect, useRef, useState } from 'react';
 import { RouteComponentProps } from 'react-router';
 import MovieComponent from './MovieComponent';
 import { getLogger } from '../core';
-import { MoviesContext } from './MovieProvider';
+import { CarsContext } from './MovieProvider';
 import { IonContent, 
          IonHeader, 
          IonList, 
@@ -35,12 +35,12 @@ import { GoogleMap } from '@capacitor/google-maps';
 import { mapsApiKey } from '../maps/mapsApiKey';
 import { MarkerClickCallbackData } from '@capacitor/google-maps/dist/typings/definitions';
 
-const log = getLogger('MoviesList');
+const log = getLogger('CarsList');
 const carsPerPage = 5;
 const filterValues = ["IsElectric", "IsNotElectric"];
 
 export const MoviesList: React.FC<RouteComponentProps> = ({ history }) => {
-  const { movies: cars, fetching, fetchingError, successMessage, closeShowSuccess } = useContext(MoviesContext);
+  const { cars: cars, fetching, fetchingError, successMessage, closeShowSuccess } = useContext(CarsContext);
   const { logout } = useContext(AuthContext);
   const [isOpen, setIsOpen]= useState(false);
   const [index, setIndex] = useState<number>(0);
@@ -230,17 +230,17 @@ const handleMapButtonClick = () => {
           disabled={!more}
           onIonInfinite={(e: CustomEvent<void>) => searchNext(e)}
         >
-          <IonInfiniteScrollContent loadingText="Loading more movies..."></IonInfiniteScrollContent>
+          <IonInfiniteScrollContent loadingText="Loading more cars..."></IonInfiniteScrollContent>
         </IonInfiniteScroll>
         {fetchingError && (
           <div className="error-message">
-            {fetchingError.message || 'Failed to fetch movies'}
+            {fetchingError.message || 'Failed to fetch cars'}
           </div>
         )}
         <IonFab vertical="bottom" horizontal="end" slot="fixed">
           <IonFabButton
             className="custom-fab-button"
-            onClick={() => history.push('/movie')}
+            onClick={() => history.push('/car')}
           >
             <IonIcon icon={add} />
           </IonFabButton>

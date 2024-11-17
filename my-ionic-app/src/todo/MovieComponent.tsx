@@ -10,21 +10,21 @@ interface CarPropsExtended extends Car {
 
 const MovieComponent: React.FC<CarPropsExtended> = ({_id, producer, price, model, sellDate, isElectric, isNotSaved,webViewPath, onEdit }) => (
     <IonItem
-    className={`movie-item ${isNotSaved ? "unsaved" : ""}`}
+    className={`car-item ${isNotSaved ? "unsaved" : ""}`}
     onClick={() => onEdit(_id)}
   >
-    <div className="movie-container">
-      <img className="movie-image" src={webViewPath} alt="Photo" />
-      <div className="movie-details">
-        <h2 className="movie-title">{model}</h2>
-        <p className="movie-producer">Producer: {producer}</p>
-        <p className="movie-price">Price: ${price}</p>
+    <div className="car-container">
+      <img className="car-image" src={webViewPath} alt="Photo" />
+      <div className="car-details">
+        <h2 className="car-title">{model}</h2>
+        <p className="car-producer">Producer: {producer}</p>
+        <p className="car-price">Price: ${price}</p>
         {sellDate && (
-          <p className="movie-sell-date">
+          <p className="car-sell-date">
             Sold at: {new Date(sellDate).toDateString()}
           </p>
         )}
-        {isElectric && <p className="movie-electric">Electric: Yes</p>}
+        {isElectric && <p className="car-electric">Electric: Yes</p>}
       </div>
     </div>
   </IonItem>

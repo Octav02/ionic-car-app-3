@@ -20,7 +20,7 @@ import {
 } from '@ionic/react';
 import { getLogger } from '../core';
 import { RouteComponentProps } from 'react-router';
-import { MoviesContext } from './MovieProvider';
+import { CarsContext } from './MovieProvider';
 import { Car } from './Movie';
 import { MyPhoto, usePhotos } from '../photo/usePhotos';
 import { camera, close, trash } from 'ionicons/icons';
@@ -30,15 +30,15 @@ import styles from './styles.module.css';
 
 const log = getLogger('EditLogger');
 
-interface MovieEditProps extends RouteComponentProps<{
+interface CarEditProps extends RouteComponentProps<{
   id?: string;
 }> {}
 
-export const MovieEdit: React.FC<MovieEditProps> = ({ history, match }) => {
-  const { movies, updating, updateError, updateMovie} = useContext(MoviesContext);
+export const MovieEdit: React.FC<CarEditProps> = ({ history, match }) => {
+  const { cars: cars, updating, updateError, updateCar: updateCar} = useContext(CarsContext);
   const [model, setModel] = useState('');
   const [price, setPrice] = useState('');
-  const [movieToUpdate, setMovieToUpdate] = useState<Car>();
+  const [carToUpdate, setCarToUpdate] = useState<Car>();
 
   //for photo
   const [webViewPath, setWebViewPath] = useState<string | undefined>('');
@@ -56,28 +56,28 @@ export const MovieEdit: React.FC<MovieEditProps> = ({ history, match }) => {
   useEffect(() => {
     const routeId = match.params.id || '';
     console.log(routeId);
-    const movie = movies?.find(it => it._id === routeId);
-    setMovieToUpdate(movie);
-    if(movie){
-      setModel(movie.model || '');
-      setPrice(movie.price?.toString() || '');
+    const car = cars?.find(it => it._id === routeId);
+    setCarToUpdate(car);
+    if(car){
+      setModel(car.model || '');
+      setPrice(car.price?.toString() || '');
 
       //for photo
-      setWebViewPath(movie.webViewPath || '');
+      setWebViewPath(car.webViewPath || '');
       
       //for map
-      setCurrentLatitude(movie.latitude ? movie.latitude : 46);
-      setCurrentLongitude(movie.longitude ? movie.longitude : 23);
+      setCurrentLatitude(car.latitude ? car.latitude : 46);
+      setCurrentLongitude(car.longitude ? car.longitude : 23);
     }
-  }, [match.params.id, movies]);
+  }, [match.params.id, cars]);
 
   const handleUpdate = useCallback(() => {
-    const editedMovie ={ ...movieToUpdate, model: model, price: parseFloat(price),webViewPath: webViewPath, latitude: currentLatitude, longitude: currentLongitude };
-    log(editedMovie);
-    console.log(updateMovie);
-    console.log(editedMovie);
-    updateMovie && updateMovie(editedMovie).then(() => editedMovie.price && history.push('/movies'));
-  }, [movieToUpdate, updateMovie, model, price,webViewPath,currentLatitude,currentLongitude, history]);
+    const editedCar ={ ...carToUpdate, model: model, price: parseFloat(price),webViewPath: webViewPath, latitude: currentLatitude, longitude: currentLongitude };
+    log(editedCar);
+    console.log(updateCar);
+    console.log(editedCar);
+    updateCar && updateCar(editedCar).then(() => editedCar.price && history.push('/cars'));
+  }, [carToUpdate, updateCar, model, price,webViewPath,currentLatitude,currentLongitude, history]);
 
   async function handlePhotoChange() {
     console.log('handle photo change...');

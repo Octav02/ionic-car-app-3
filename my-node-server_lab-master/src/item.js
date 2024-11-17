@@ -15,12 +15,12 @@ export class ItemStore {
     return this.store.findOne(props);
   }
 
-  async insert(movie) {
-    if (!movie.model || !movie.producer) {
+  async insert(car) {
+    if (!car.model || !car.producer) {
       throw new Error("Missing model or producer!");
     }
 
-    return this.store.insert(movie);
+    return this.store.insert(car);
   }
 
   async update(props, item) {
@@ -58,18 +58,18 @@ itemRouter.get("/:id", async (ctx) => {
   }
 });
 
-const createItem = async (ctx, movie, response) => {
+const createItem = async (ctx, car, response) => {
   try {
     const userId = ctx.state.user._id;
     console.log(userId);
-    movie.userId = userId;
-    movie.isNotSaved = false;
-    response.body = await itemStore.insert(movie);
+    car.userId = userId;
+    car.isNotSaved = false;
+    response.body = await itemStore.insert(car);
     console.log(response.body);
     response.status = 201; // created
     broadcast(userId, {
       event: "created",
-      payload: { updatedMovie: response.body },
+      payload: { updatedCar: response.body },
     });
   } catch (err) {
     console.log(err);
@@ -84,31 +84,31 @@ itemRouter.post(
 );
 
 itemRouter.put("/:id", async (ctx) => {
-  const movie = ctx.request.body;
+  const car = ctx.request.body;
   const id = ctx.params.id;
-  const movieId = movie._id;
+  const carId = car._id;
   const response = ctx.response;
-  console.log(movieId)
+  console.log(carId)
   console.log(id)
-  if (movieId && movieId !== id) {
+  if (carId && carId !== id) {
     response.body = { message: "Param id and body _id should be the same" };
     response.status = 400; // bad request
     return;
   }
-  if (!movieId) {
-    console.log("entered create although put " + movieId)
-    await createItem(ctx, movie, response);
+  if (!carId) {
+    console.log("entered create although put " + carId)
+    await createItem(ctx, car, response);
   } else {
     const userId = ctx.state.user._id;
-    movie.userId = userId;
-    const updatedCount = await itemStore.update({ _id: id }, movie);
+    car.userId = userId;
+    const updatedCount = await itemStore.update({ _id: id }, car);
     if (updatedCount === 1) {
-      response.body = movie;
+      response.body = car;
       response.status = 200; // ok
-      movie.isNotSaved = false;
+      car.isNotSaved = false;
       broadcast(userId, {
         event: "updated",
-        payload: { successMessage: "Updated movie!", updatedMovie: movie },
+        payload: { successMessage: "Updated car!", updatedCar: car },
       });
     } else {
       response.body = { message: "Resource no longer exists" };

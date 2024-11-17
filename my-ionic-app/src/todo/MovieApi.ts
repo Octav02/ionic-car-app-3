@@ -3,33 +3,33 @@ import { getLogger, authConfig, baseUrl, withLogs } from "../core";
 import { Car } from "./Movie";
 import { Preferences } from "@capacitor/preferences";
 
-const log = getLogger('movieLogger');
+const log = getLogger('carAPI');
 
-const getBooksUrl = `http://${baseUrl}/api/car`;
-const updateBookUrl = `http://${baseUrl}/api/car`;
-const createMovieUrl = `http://${baseUrl}/api/car`;
+const getCarsUrl = `http://${baseUrl}/api/car`;
+const updateCarsUrl = `http://${baseUrl}/api/car`;
+const createCarUrl = `http://${baseUrl}/api/car`;
 
-export const getAllMovies: (token: string) => Promise<Car[]> = (token) => {
-    return withLogs(axios.get(getBooksUrl, authConfig(token)), 'getAllMovies');
+export const getAllCars: (token: string) => Promise<Car[]> = (token) => {
+    return withLogs(axios.get(getCarsUrl, authConfig(token)), 'getAllCars');
 }
 
-export const updateMovieAPI: (token: string, movie: Car) => Promise<Car[]> = (token, movie) => {
-    return withLogs(axios.put(`${updateBookUrl}/${movie._id}`, movie, authConfig(token)), 'updateMovie');
+export const updateCarAPI: (token: string, car: Car) => Promise<Car[]> = (token, car) => {
+    return withLogs(axios.put(`${updateCarsUrl}/${car._id}`, car, authConfig(token)), 'updateCar');
 }
 
-export const createMovieAPI: (token: string, movie: Car) => Promise<Car[]> = (token, movie) => {
-  return withLogs(axios.post(`${createMovieUrl}`, movie, authConfig(token)), 'createMovie');
+export const createCarAPI: (token: string, car: Car) => Promise<Car[]> = (token, car) => {
+  return withLogs(axios.post(`${createCarUrl}`, car, authConfig(token)), 'createCar');
 }
 
-export const deleteMovieAPI: (token: string, id: string) => Promise<Car[]> = (token, id) => {
-  return withLogs(axios.delete(`${createMovieUrl}/${id}`, authConfig(token)), 'deleteMovie');
+export const deleteCarAPI: (token: string, id: string) => Promise<Car[]> = (token, id) => {
+  return withLogs(axios.delete(`${createCarUrl}/${id}`, authConfig(token)), 'deleteCar');
 }
 
 interface MessageData {
     event: string;
     payload: {
       successMessage: string,
-      updatedMovie: Car
+      updatedCar: Car
     };
 }
 

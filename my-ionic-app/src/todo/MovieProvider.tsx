@@ -1,25 +1,25 @@
 import React, { useCallback, useEffect, useReducer, useContext } from 'react';
 import PropTypes from 'prop-types';
 import { getLogger } from '../core';
-import { getAllMovies, updateMovieAPI, createMovieAPI, newWebSocket, deleteMovieAPI } from './MovieApi';
+import { getAllCars, updateCarAPI as updateCarAPI, createCarAPI as createCarAPI, newWebSocket, deleteCarAPI } from './MovieApi';
 import { Car } from './Movie';
 import { AuthContext } from '../auth';
 import { useNetwork } from '../pages/useNetwork';
 import {useIonToast} from "@ionic/react";
 import { Preferences } from '@capacitor/preferences';
 
-const log = getLogger('MovieProvider');
+const log = getLogger('CarProvider');
 
-type UpdateMovieFn = (movie: Car) => Promise<any>;
+type UpdateCarFn = (car: Car) => Promise<any>;
 
-interface MoviesState {
-    movies?: Car[];
+interface CarsState {
+    cars?: Car[];
     fetching: boolean;
     fetchingError?: Error | null;
     updating: boolean,
     updateError?: Error | null,
-    updateMovie?: UpdateMovieFn,
-    addMovie?: UpdateMovieFn,
+    updateCar?: UpdateCarFn,
+    addCar?: UpdateCarFn,
     successMessage?: string;
     closeShowSuccess?: () => void;
 }
@@ -29,7 +29,7 @@ interface ActionProps {
     payload?: any,
 }
 
-const initialState: MoviesState = {
+const initialState: CarsState = {
     fetching: false,
     updating: false,
 };
@@ -46,13 +46,13 @@ const CREATE_CAR_STARTED = 'CREATE_CAR_STARTED';
 const CREATE_CAR_SUCCEDED = 'CREATE_CAR_SUCCEDED';
 const CREATE_CAR_FAILED = 'CREATE_CAR_FAILED';
 
-const reducer: (state: MoviesState, action: ActionProps) => MoviesState 
+const reducer: (state: CarsState, action: ActionProps) => CarsState 
     = (state, { type, payload }) => {
     switch(type){
         case FETCH_CARS_STARTED:
             return { ...state, fetching: true, fetchingError: null };
         case FETCH_CARS_SUCCEEDED:
-            return {...state, movies: payload.movies, fetching: false };
+            return {...state, cars: payload.cars, fetching: false };
         case FETCH_CARS_FAILED:
             return { ...state, fetchingError: payload.error, fetching: false };
         case UPDATE_CAR_STARTED:
@@ -60,37 +60,37 @@ const reducer: (state: MoviesState, action: ActionProps) => MoviesState
         case UPDATE_CAR_FAILED:
             return { ...state, updateError: payload.error, updating: false };
         case UPDATE_CAR_SUCCESS:
-            const movies = [...(state.movies || [])];
-            const movie = payload.movie;
-            const index = movies.findIndex(it => it._id === movie._id);
-            movies[index] = movie;
-            return { ...state,  movies, updating: false };
+            const cars = [...(state.cars || [])];
+            const car = payload.car;
+            const index = cars.findIndex(it => it._id === car._id);
+            cars[index] = car;
+            return { ...state,  cars, updating: false };
         case CREATE_CAR_FAILED:
             console.log(payload.error);
           return { ...state, updateError: payload.error, updating: false };
         case CREATE_CAR_STARTED:
           return { ...state, updateError: null, updating: true };
         case CREATE_CAR_SUCCEDED:
-            const beforeMovies = [...(state.movies || [])];
-            const createdMovie = payload.movie;
-            console.log(createdMovie);
-            const indexOfAdded = beforeMovies.findIndex(it => it._id === createdMovie._id || it.model === createdMovie.model);
+            const beforeCars = [...(state.cars || [])];
+            const createdCars = payload.car;
+            console.log(createdCars);
+            const indexOfAdded = beforeCars.findIndex(it => it._id === createdCars._id || it.model === createdCars.model);
             console.log("index: ", indexOfAdded);
             if (indexOfAdded === -1) {
-                beforeMovies.splice(0, 0, createdMovie);
+                beforeCars.splice(0, 0, createdCars);
             } else {
-                beforeMovies[indexOfAdded] = createdMovie;
+                beforeCars[indexOfAdded] = createdCars;
             }
-            console.log(beforeMovies);
+            console.log(beforeCars);
             console.log(payload);
-            return { ...state,  movies: beforeMovies, updating: false, updateError: null };
+            return { ...state,  cars: beforeCars, updating: false, updateError: null };
         case SHOW_SUCCESS_MESSSAGE:
-            const allMovies = [...(state.movies || [])];
-            const updatedMovie = payload.updatedMovie;
-            const indexOfMovie = allMovies.findIndex(it => it._id === updatedMovie._id);
-            allMovies[indexOfMovie] = updatedMovie;
+            const allCars = [...(state.cars || [])];
+            const updatedCar = payload.updatedCar;
+            const indexOfCar = allCars.findIndex(it => it._id === updatedCar._id);
+            allCars[indexOfCar] = updatedCar;
             console.log(payload);
-            return {...state, movies: allMovies, successMessage: payload.successMessage }
+            return {...state, cars: allCars, successMessage: payload.successMessage }
         case HIDE_SUCCESS_MESSSAGE:
             return {...state, successMessage: payload }
         
@@ -99,15 +99,15 @@ const reducer: (state: MoviesState, action: ActionProps) => MoviesState
     }
 };
 
-export const MoviesContext = React.createContext(initialState);
+export const CarsContext = React.createContext(initialState);
 
-interface MovieProviderProps {
+interface CarProviderProps {
     children: PropTypes.ReactNodeLike,
 }
 
-export const MovieProvider: React.FC<MovieProviderProps> = ({ children }) => {
+export const MovieProvider: React.FC<CarProviderProps> = ({ children }) => {
     const [state, dispatch] = useReducer(reducer, initialState);
-    const { movies, fetching, fetchingError, updating, updateError, successMessage } = state;
+    const { cars: cars, fetching, fetchingError, updating, updateError, successMessage } = state;
     const { token } = useContext(AuthContext);
     const { networkStatus } = useNetwork();
     const [toast] = useIonToast();
@@ -116,8 +116,8 @@ export const MovieProvider: React.FC<MovieProviderProps> = ({ children }) => {
     useEffect(wsEffect, [token]);
     useEffect(executePendingOperations, [networkStatus.connected, token, toast]);
 
-    const updateMovie = useCallback<UpdateMovieFn>(updateMovieCallback, [token]);
-    const addMovie = useCallback<UpdateMovieFn>(addMovieCallback, [token]);
+    const updateCar = useCallback<UpdateCarFn>(updateCarCallback, [token]);
+    const addCar = useCallback<UpdateCarFn>(addCarCallback, [token]);
 
     log('returns');
 
@@ -134,12 +134,12 @@ export const MovieProvider: React.FC<MovieProviderProps> = ({ children }) => {
           }
 
             try{
-                log('fetchMovies started');
+                log('fetchCars started');
                 dispatch({ type: FETCH_CARS_STARTED });
-                const movies = await getAllMovies(token);
+                const cars = await getAllCars(token);
                 log('fetchItems succeeded');
                 if (!canceled) {
-                dispatch({ type: FETCH_CARS_SUCCEEDED, payload: { movies } });
+                dispatch({ type: FETCH_CARS_SUCCEEDED, payload: { cars: cars } });
                 }
             } catch (error) {
                 log('fetchItems failed');
@@ -150,58 +150,58 @@ export const MovieProvider: React.FC<MovieProviderProps> = ({ children }) => {
         }
     }
 
-    async function updateMovieCallback(movie: Car) {
+    async function updateCarCallback(car: Car) {
         try {
-          log('updateMovie started');
+          log('updateCar started');
           dispatch({ type: UPDATE_CAR_STARTED });
-          const updatedMovie = await updateMovieAPI(token, movie);
-          log('saveMovie succeeded');
-          dispatch({ type: UPDATE_CAR_SUCCESS, payload: { movie: updatedMovie } });
+          const updatedCar = await updateCarAPI(token, car);
+          log('saveCar succeeded');
+          dispatch({ type: UPDATE_CAR_SUCCESS, payload: { car: updatedCar } });
         } catch (error: any) {
-          log('updateMovie failed');
+          log('updateCar failed');
           // save item to storage
-          console.log('Updating movie locally...');
+          console.log('Updating car locally...');
 
-          movie.isNotSaved = true;
+          car.isNotSaved = true;
           await Preferences.set({
-            key: `upd-${movie.model}`,
-            value: JSON.stringify({token, movie })
+            key: `upd-${car.model}`,
+            value: JSON.stringify({token, car: car })
           });
-          dispatch({ type: UPDATE_CAR_SUCCESS, payload: { movie: movie } });
-          toast("You are offline... Updating movie locally!", 3000);
+          dispatch({ type: UPDATE_CAR_SUCCESS, payload: { car: car } });
+          toast("You are offline... Updating car locally!", 3000);
     
           if(error.toJSON().message === 'Network Error')
             dispatch({ type: UPDATE_CAR_FAILED, payload: { error: new Error(error.response) } });
         }
     }
 
-    async function addMovieCallback(movie: Car){
+    async function addCarCallback(car: Car){
         try{
-          log('addMovie started');
+          log('addCar started');
           dispatch({ type: CREATE_CAR_STARTED });
           console.log(token);
-          const addedMovie = await createMovieAPI(token, movie);
-          console.log(addedMovie);
-          log('saveMovie succeeded');
-          dispatch({ type: CREATE_CAR_SUCCEDED, payload: { movie: addedMovie } });
+          const addedCar = await createCarAPI(token, car);
+          console.log(addedCar);
+          log('saveCar succeeded');
+          dispatch({ type: CREATE_CAR_SUCCEDED, payload: { car: addedCar } });
         }catch(error: any){
-          log('addMovie failed');
+          log('addCar failed');
           console.log(error.response);
           // save item to storage
-          console.log('Saving movie locally...');
+          console.log('Saving car locally...');
           const { keys } = await Preferences.keys();
           const matchingKeys = keys.filter(key => key.startsWith('sav-'));
           const numberOfItems = matchingKeys.length + 1;
           console.log(numberOfItems);
 
-          movie._id = numberOfItems.toString(); // ii adaug si id...
-          movie.isNotSaved = true;
+          car._id = numberOfItems.toString(); // ii adaug si id...
+          car.isNotSaved = true;
           await Preferences.set({
-            key: `sav-${movie.model}`,
-            value: JSON.stringify({token, movie })
+            key: `sav-${car.model}`,
+            value: JSON.stringify({token, car: car })
           });
-          dispatch({ type: CREATE_CAR_SUCCEDED, payload: { movie: movie } });
-          toast("You are offline... Saving movie locally!", 3000);
+          dispatch({ type: CREATE_CAR_SUCCEDED, payload: { car: car } });
+          toast("You are offline... Saving car locally!", 3000);
     
           if(error.toJSON().message === 'Network Error')
             dispatch({ type: CREATE_CAR_FAILED, payload: { error: new Error(error.response || 'Network error') } });
@@ -219,9 +219,9 @@ export const MovieProvider: React.FC<MovieProviderProps> = ({ children }) => {
                       console.log("Result", res);
                       if (typeof res.value === "string") {
                           const value = JSON.parse(res.value);
-                          value.movie._id=undefined;  // ca sa imi puna serverul id nou!!
+                          value.car._id=undefined;  // ca sa imi puna serverul id nou!!
                           log('creating item from pending', value);
-                          await addMovieCallback(value.movie);
+                          await addCarCallback(value.car);
                           await Preferences.remove({key: key});
                       }
                   }
@@ -233,7 +233,7 @@ export const MovieProvider: React.FC<MovieProviderProps> = ({ children }) => {
                     if (typeof res.value === "string") {
                         const value = JSON.parse(res.value);
                         log('updating item from pending', value);
-                        await updateMovieCallback(value.movie);
+                        await updateCarCallback(value.car);
                         await Preferences.remove({key: key});
                     }
                 }
@@ -258,11 +258,11 @@ export const MovieProvider: React.FC<MovieProviderProps> = ({ children }) => {
             log(`ws message, item ${event}`);
             if (event === 'updated') {
               console.log(payload);
-              dispatch({ type: SHOW_SUCCESS_MESSSAGE, payload: {successMessage: payload.successMessage, updatedMovie: payload.updatedMovie } });
+              dispatch({ type: SHOW_SUCCESS_MESSSAGE, payload: {successMessage: payload.successMessage, updatedCar: payload.updatedCar } });
             }
             else if(event == 'created'){
               console.log(payload);
-              dispatch({ type: CREATE_CAR_SUCCEDED, payload: { movie: payload.updatedMovie } });
+              dispatch({ type: CREATE_CAR_SUCCEDED, payload: { car: payload.updatedCar } });
             }
           });
         }
@@ -277,12 +277,12 @@ export const MovieProvider: React.FC<MovieProviderProps> = ({ children }) => {
         dispatch({ type: HIDE_SUCCESS_MESSSAGE, payload: null });
     }
 
-    const value = { movies, fetching, fetchingError, updating, updateError, updateMovie, addMovie, successMessage, closeShowSuccess };
+    const value = { cars: cars, fetching, fetchingError, updating, updateError, updateCar: updateCar, addCar: addCar, successMessage, closeShowSuccess };
 
     return (
-        <MoviesContext.Provider value={value}>
+        <CarsContext.Provider value={value}>
             {children}
-        </MoviesContext.Provider>
+        </CarsContext.Provider>
     );
 };
 
