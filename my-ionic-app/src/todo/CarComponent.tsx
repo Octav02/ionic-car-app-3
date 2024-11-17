@@ -1,14 +1,14 @@
 import React, { memo } from "react";
 import { IonItem, IonLabel } from "@ionic/react";
 import { getLogger } from "../core";
-import { Car } from "./Movie";
-import './MovieComponent.css'; // Import the CSS file
+import { Car } from "./Car";
+import './CarComponent.css'; // Import the CSS file
 
 interface CarPropsExtended extends Car {
     onEdit: (_id?: string) => void;
 }
 
-const MovieComponent: React.FC<CarPropsExtended> = ({_id, producer, price, model, sellDate, isElectric, isNotSaved,webViewPath, onEdit }) => (
+const CarComponent: React.FC<CarPropsExtended> = ({_id, producer, price, model, sellDate, isElectric, isNotSaved,webViewPath, onEdit }) => (
     <IonItem
     className={`car-item ${isNotSaved ? "unsaved" : ""}`}
     onClick={() => onEdit(_id)}
@@ -31,4 +31,4 @@ const MovieComponent: React.FC<CarPropsExtended> = ({_id, producer, price, model
 );
 
 
-export default memo(MovieComponent);
+export default memo(CarComponent);

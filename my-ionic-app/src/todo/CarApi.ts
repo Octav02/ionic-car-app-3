@@ -1,6 +1,6 @@
 import axios from "axios";
 import { getLogger, authConfig, baseUrl, withLogs } from "../core";
-import { Car } from "./Movie";
+import { Car } from "./Car";
 import { Preferences } from "@capacitor/preferences";
 
 const log = getLogger('carAPI');

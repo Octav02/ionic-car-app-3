@@ -1,8 +1,8 @@
 import React, { useCallback, useEffect, useReducer, useContext } from 'react';
 import PropTypes from 'prop-types';
 import { getLogger } from '../core';
-import { getAllCars, updateCarAPI as updateCarAPI, createCarAPI as createCarAPI, newWebSocket, deleteCarAPI } from './MovieApi';
-import { Car } from './Movie';
+import { getAllCars, updateCarAPI as updateCarAPI, createCarAPI as createCarAPI, newWebSocket, deleteCarAPI } from './CarApi';
+import { Car } from './Car';
 import { AuthContext } from '../auth';
 import { useNetwork } from '../pages/useNetwork';
 import {useIonToast} from "@ionic/react";
@@ -105,7 +105,7 @@ interface CarProviderProps {
     children: PropTypes.ReactNodeLike,
 }
 
-export const MovieProvider: React.FC<CarProviderProps> = ({ children }) => {
+export const CarProvider: React.FC<CarProviderProps> = ({ children }) => {
     const [state, dispatch] = useReducer(reducer, initialState);
     const { cars: cars, fetching, fetchingError, updating, updateError, successMessage } = state;
     const { token } = useContext(AuthContext);

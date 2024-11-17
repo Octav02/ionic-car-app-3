@@ -20,8 +20,8 @@ import {
 } from '@ionic/react';
 import { getLogger } from '../core';
 import { RouteComponentProps } from 'react-router';
-import { CarsContext } from './MovieProvider';
-import { Car } from './Movie';
+import { CarsContext } from './CarProvider';
+import { Car } from './Car';
 import { MyPhoto, usePhotos } from '../photo/usePhotos';
 import { camera, close, trash } from 'ionicons/icons';
 import MyMap from '../maps/MyMap';
@@ -34,7 +34,7 @@ interface CarEditProps extends RouteComponentProps<{
   id?: string;
 }> {}
 
-export const MovieEdit: React.FC<CarEditProps> = ({ history, match }) => {
+export const CarEdit: React.FC<CarEditProps> = ({ history, match }) => {
   const { cars: cars, updating, updateError, updateCar: updateCar} = useContext(CarsContext);
   const [model, setModel] = useState('');
   const [price, setPrice] = useState('');

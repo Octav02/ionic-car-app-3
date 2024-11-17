@@ -1,8 +1,8 @@
 import React, { useContext, useEffect, useRef, useState } from 'react';
 import { RouteComponentProps } from 'react-router';
-import MovieComponent from './MovieComponent';
+import CarComponent from './CarComponent';
 import { getLogger } from '../core';
-import { CarsContext } from './MovieProvider';
+import { CarsContext } from './CarProvider';
 import { IonContent, 
          IonHeader, 
          IonList, 
@@ -28,8 +28,8 @@ import { IonContent,
 import { add } from 'ionicons/icons';
 import { AuthContext } from '../auth';
 import { NetworkState } from '../pages/NetworkState';
-import { Car } from './Movie';
-import './MovieList.css'; // Import the CSS file
+import { Car } from './Car';
+import './CarList.css'; // Import the CSS file
 
 import { GoogleMap } from '@capacitor/google-maps';
 import { mapsApiKey } from '../maps/mapsApiKey';
@@ -39,7 +39,7 @@ const log = getLogger('CarsList');
 const carsPerPage = 5;
 const filterValues = ["IsElectric", "IsNotElectric"];
 
-export const MoviesList: React.FC<RouteComponentProps> = ({ history }) => {
+export const CarsList: React.FC<RouteComponentProps> = ({ history }) => {
   const { cars: cars, fetching, fetchingError, successMessage, closeShowSuccess } = useContext(CarsContext);
   const { logout } = useContext(AuthContext);
   const [isOpen, setIsOpen]= useState(false);
@@ -208,7 +208,7 @@ const handleMapButtonClick = () => {
         {carsAux && (
           <IonList className="custom-car-list">
             {carsAux.map((car) => (
-              <MovieComponent
+              <CarComponent
                 key={car._id}
                 _id={car._id}
                 producer={car.producer}

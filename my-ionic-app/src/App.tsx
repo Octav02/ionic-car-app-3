@@ -12,10 +12,10 @@ import '@ionic/react/css/typography.css';
 
 
 
-import { MoviesList } from './todo/MoviesList';
-import { MovieProvider } from './todo/MovieProvider';
-import { MovieEdit } from './todo/MovieEdit';
-import { MovieAdd } from './todo/MovieAdd';
+import { CarsList } from './todo/CarsList';
+import { CarProvider } from './todo/CarProvider';
+import { CarEdit } from './todo/CarEdit';
+import { CarAdd } from './todo/CarAdd';
 import { AuthProvider, Login, PrivateRoute } from './auth';
 
 setupIonicReact();
@@ -26,11 +26,11 @@ const App: React.FC = () => (
         <IonRouterOutlet>
           <AuthProvider>
             <Route path="/login" component={Login} exact={true}/>
-            <MovieProvider>
-              <PrivateRoute path="/cars" component={MoviesList} exact={true} />
-              <PrivateRoute path="/car" component={MovieAdd} exact={true}/>
-              <PrivateRoute path="/car/:id" component={MovieEdit} exact={true}/>
-            </MovieProvider>
+            <CarProvider>
+              <PrivateRoute path="/cars" component={CarsList} exact={true} />
+              <PrivateRoute path="/car" component={CarAdd} exact={true}/>
+              <PrivateRoute path="/car/:id" component={CarEdit} exact={true}/>
+            </CarProvider>
             <Route exact path="/" render={() => <Redirect to="/cars"/>}/>
           </AuthProvider>
         </IonRouterOutlet>
